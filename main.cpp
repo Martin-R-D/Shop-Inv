@@ -1,6 +1,9 @@
 #include <iostream>
 #include <limits>
 #include "Store.h"
+#include "FileManager.h"
+#include "PercentDiscount.h"
+#include "FixedDiscount.h"
 using namespace std;
 
 void clearInput() {
@@ -120,12 +123,14 @@ void salesMenu(Store& store) {
     do {
         cout << "\n=== Sales ===" << endl;
         cout << "1. New sale" << endl;
-        cout << "2. View transaction history" << endl;
+        cout << "2. New sale with discount" << endl;
+        cout << "3. View transaction history" << endl;
+        cout << "4. Filter transactions by date" << endl;
         cout << "0. Back" << endl;
         cout << "Choice: ";
         cin >> choice; clearInput();
 
-        if (choice == 1) {
+        if (choice == 1 || choice == 2) {
             string payment;
             cout << "Payment method (cash/card): "; getline(cin, payment);
             Transaction* t = store.createTransaction(payment);
@@ -137,18 +142,49 @@ void salesMenu(Store& store) {
                 cout << "Product ID: "; cin >> prodId; clearInput();
                 cout << "Quantity: "; cin >> qty; clearInput();
                 store.addItemToTransaction(t, prodId, qty);
+
+                if (choice == 2) {
+                    int discType;
+                    double val;
+                    cout << "Discount? (1=percent, 2=fixed, 0=none): ";
+                    cin >> discType; clearInput();
+                    if (discType == 1) {
+                        cout << "Percent: "; cin >> val; clearInput();
+                        Discount* d = new PercentDiscount(val);
+                        store.applyDiscountToTransaction(t, t->getItems().size() - 1, d);
+                    } else if (discType == 2) {
+                        cout << "Amount: "; cin >> val; clearInput();
+                        Discount* d = new FixedDiscount(val);
+                        store.applyDiscountToTransaction(t, t->getItems().size() - 1, d);
+                    }
+                }
+
                 cout << "Add another? (1=yes, 0=no): "; cin >> addMore; clearInput();
             }
-
             store.finalizeTransaction(t);
-        } else if (choice == 2) {
+        } else if (choice == 3) {
             store.listTransactions();
+        } else if (choice == 4) {
+            string date;
+            cout << "Date to search: "; getline(cin, date);
+            auto results = store.filterTransactionsByDate(date);
+            if (results.empty()) { cout << "No transactions found." << endl; }
+            else {
+                for (const auto* t : results)
+                    cout << "  [#" << t->getId() << "] " << t->getDate()
+                         << " | Total: " << t->getTotalAmount() << endl;
+            }
         }
     } while (choice != 0);
 }
 
 int main() {
     Store store;
+
+    
+    FileManager::loadCategories(store, "categories.txt");
+    FileManager::loadProducts(store, "products.txt");
+
     int choice;
     cout << "=== Shop Inventory & Cashier System ===" << endl;
 
@@ -158,6 +194,7 @@ int main() {
         cout << "2. Product management" << endl;
         cout << "3. Inventory management" << endl;
         cout << "4. Sales" << endl;
+        cout << "5. Save data" << endl;
         cout << "0. Exit" << endl;
         cout << "Choice: ";
         cin >> choice; clearInput();
@@ -167,7 +204,17 @@ int main() {
             case 2: productMenu(store); break;
             case 3: inventoryMenu(store); break;
             case 4: salesMenu(store); break;
-            case 0: cout << "Goodbye!" << endl; break;
+            case 5:
+                FileManager::saveCategories(store, "categories.txt");
+                FileManager::saveProducts(store, "products.txt");
+                FileManager::saveTransactions(store, "transactions.txt");
+                break;
+            case 0:
+                FileManager::saveCategories(store, "categories.txt");
+                FileManager::saveProducts(store, "products.txt");
+                FileManager::saveTransactions(store, "transactions.txt");
+                cout << "Data saved. Goodbye!" << endl;
+                break;
             default: cout << "Invalid choice." << endl;
         }
     } while (choice != 0);

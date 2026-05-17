@@ -47,4 +47,9 @@ public:
     void addItemToTransaction(Transaction* t, int productId, int qty);
     void finalizeTransaction(Transaction* t);
     void listTransactions() const;
+
+
+    void applyDiscountToTransaction(Transaction* t, int itemIndex, Discount* d);
+    vector<Transaction*> filterTransactionsByDate(const string& date) const;
+    const vector<Transaction*>& getTransactions() const;
 };

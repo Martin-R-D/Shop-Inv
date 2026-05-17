@@ -189,3 +189,28 @@ void Store::listTransactions() const {
              << " | Total: " << t->getTotalAmount() << endl;
     }
 }
+
+
+void Store::applyDiscountToTransaction(Transaction* t, int itemIndex, Discount* d) {
+    auto& items = t->getItems();
+    if (itemIndex >= 0 && itemIndex < (int)items.size()) {
+        // Need non-const access — workaround
+        TransactionItem& item = const_cast<TransactionItem&>(items[itemIndex]);
+        item.applyDiscount(d);
+        cout << "Discount applied: " << d->getDescription() << endl;
+    } else {
+        cout << "Invalid item index." << endl;
+    }
+}
+
+vector<Transaction*> Store::filterTransactionsByDate(const string& date) const {
+    vector<Transaction*> result;
+    for (auto* t : transactions) {
+        if (t->getDate().find(date) != string::npos) {
+            result.push_back(t);
+        }
+    }
+    return result;
+}
+
+const vector<Transaction*>& Store::getTransactions() const { return transactions; }

@@ -5,7 +5,8 @@ TARGET = shop
 SRCS = main.cpp Person.cpp Admin.cpp Cashier.cpp Supplier.cpp \
        Product.cpp PhysicalProduct.cpp ServiceProduct.cpp \
        Category.cpp Discount.cpp PercentDiscount.cpp \
-       Transaction.cpp TransactionItem.cpp Delivery.cpp Store.cpp
+       Transaction.cpp TransactionItem.cpp Delivery.cpp Store.cpp \
+	   FileManager.cpp FixedDiscount.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 
