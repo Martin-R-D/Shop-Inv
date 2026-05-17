@@ -1,12 +1,14 @@
 #include "Store.h"
 #include <iostream>
 #include <algorithm>
+#include <ctime>
 
-Store::Store() : nextCategoryId(1), nextProductId(1) {}
+Store::Store() : nextTransactionId(1), nextCategoryId(1), nextProductId(1) {}
 
 Store::~Store() {
     for (auto* c : categories) delete c;
     for (auto* p : products) delete p;
+    for (auto* t : transactions) delete t;
 }
 
 void Store::addCategory(const string& name) {
@@ -143,4 +145,47 @@ void Store::showInventorySummary() const {
     cout << "  Total units in stock: " << totalUnits << endl;
     cout << "  Total inventory value: " << totalValue << endl;
     cout << "  Categories: " << categories.size() << endl;
+}
+
+
+
+Transaction* Store::createTransaction(const string& paymentMethod) {
+    time_t now = time(0);
+    string date = ctime(&now);
+    date.pop_back(); // remove newline
+    Transaction* t = new Transaction(nextTransactionId++, date, paymentMethod);
+    return t;
+}
+
+void Store::addItemToTransaction(Transaction* t, int productId, int qty) {
+    Product* p = findProduct(productId);
+    if (!p) { cout << "Product not found." << endl; return; }
+
+    PhysicalProduct* pp = dynamic_cast<PhysicalProduct*>(p);
+    if (pp) {
+        if (!pp->reduceStock(qty)) {
+            cout << "Not enough stock. Available: " << pp->getQuantity() << endl;
+            return;
+        }
+    }
+
+    TransactionItem item(p, qty);
+    t->addItem(item);
+    cout << "Added " << p->getName() << " x" << qty << endl;
+}
+
+void Store::finalizeTransaction(Transaction* t) {
+    t->calculateTotal();
+    transactions.push_back(t);
+    cout << t->generateReceipt();
+}
+
+void Store::listTransactions() const {
+    if (transactions.empty()) { cout << "No transactions." << endl; return; }
+    cout << "\n--- Transaction History ---" << endl;
+    for (const auto* t : transactions) {
+        cout << "  [#" << t->getId() << "] " << t->getDate()
+             << " | " << t->getPaymentMethod()
+             << " | Total: " << t->getTotalAmount() << endl;
+    }
 }

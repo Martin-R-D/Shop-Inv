@@ -114,6 +114,39 @@ void inventoryMenu(Store& store) {
     } while (choice != 0);
 }
 
+
+void salesMenu(Store& store) {
+    int choice;
+    do {
+        cout << "\n=== Sales ===" << endl;
+        cout << "1. New sale" << endl;
+        cout << "2. View transaction history" << endl;
+        cout << "0. Back" << endl;
+        cout << "Choice: ";
+        cin >> choice; clearInput();
+
+        if (choice == 1) {
+            string payment;
+            cout << "Payment method (cash/card): "; getline(cin, payment);
+            Transaction* t = store.createTransaction(payment);
+
+            int addMore = 1;
+            while (addMore) {
+                store.listProducts();
+                int prodId, qty;
+                cout << "Product ID: "; cin >> prodId; clearInput();
+                cout << "Quantity: "; cin >> qty; clearInput();
+                store.addItemToTransaction(t, prodId, qty);
+                cout << "Add another? (1=yes, 0=no): "; cin >> addMore; clearInput();
+            }
+
+            store.finalizeTransaction(t);
+        } else if (choice == 2) {
+            store.listTransactions();
+        }
+    } while (choice != 0);
+}
+
 int main() {
     Store store;
     int choice;
@@ -124,6 +157,7 @@ int main() {
         cout << "1. Category management" << endl;
         cout << "2. Product management" << endl;
         cout << "3. Inventory management" << endl;
+        cout << "4. Sales" << endl;
         cout << "0. Exit" << endl;
         cout << "Choice: ";
         cin >> choice; clearInput();
@@ -132,6 +166,7 @@ int main() {
             case 1: categoryMenu(store); break;
             case 2: productMenu(store); break;
             case 3: inventoryMenu(store); break;
+            case 4: salesMenu(store); break;
             case 0: cout << "Goodbye!" << endl; break;
             default: cout << "Invalid choice." << endl;
         }

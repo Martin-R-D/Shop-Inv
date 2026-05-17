@@ -3,6 +3,8 @@
 #include "Product.h"
 #include "PhysicalProduct.h"
 #include "ServiceProduct.h"
+#include "Transaction.h"
+#include "TransactionItem.h"
 #include <vector>
 #include <string>
 using namespace std;
@@ -11,6 +13,8 @@ class Store {
 private:
     vector<Category*> categories;
     vector<Product*> products;
+    vector<Transaction*> transactions;
+    int nextTransactionId;
     int nextCategoryId;
     int nextProductId;
 public:
@@ -37,4 +41,10 @@ public:
     void checkLowStock() const;
     void restockProduct(int productId, int qty);
     void showInventorySummary() const;
+
+
+    Transaction* createTransaction(const string& paymentMethod);
+    void addItemToTransaction(Transaction* t, int productId, int qty);
+    void finalizeTransaction(Transaction* t);
+    void listTransactions() const;
 };
