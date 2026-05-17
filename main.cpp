@@ -89,6 +89,31 @@ void productMenu(Store& store) {
     } while (choice != 0);
 }
 
+void inventoryMenu(Store& store) {
+    int choice;
+    do {
+        cout << "\n=== Inventory Management ===" << endl;
+        cout << "1. Check low stock alerts" << endl;
+        cout << "2. Restock a product" << endl;
+        cout << "3. Inventory summary" << endl;
+        cout << "0. Back" << endl;
+        cout << "Choice: ";
+        cin >> choice; clearInput();
+
+        if (choice == 1) {
+            store.checkLowStock();
+        } else if (choice == 2) {
+            int id, qty;
+            store.listProducts();
+            cout << "Product ID: "; cin >> id; clearInput();
+            cout << "Quantity to add: "; cin >> qty; clearInput();
+            store.restockProduct(id, qty);
+        } else if (choice == 3) {
+            store.showInventorySummary();
+        }
+    } while (choice != 0);
+}
+
 int main() {
     Store store;
     int choice;
@@ -98,6 +123,7 @@ int main() {
         cout << "\n=== Main Menu ===" << endl;
         cout << "1. Category management" << endl;
         cout << "2. Product management" << endl;
+        cout << "3. Inventory management" << endl;
         cout << "0. Exit" << endl;
         cout << "Choice: ";
         cin >> choice; clearInput();
@@ -105,6 +131,7 @@ int main() {
         switch (choice) {
             case 1: categoryMenu(store); break;
             case 2: productMenu(store); break;
+            case 3: inventoryMenu(store); break;
             case 0: cout << "Goodbye!" << endl; break;
             default: cout << "Invalid choice." << endl;
         }

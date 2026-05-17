@@ -99,3 +99,48 @@ Product* Store::findProductByBarcode(const string& barcode) const {
 
 const vector<Product*>& Store::getProducts() const { return products; }
 const vector<Category*>& Store::getCategories() const { return categories; }
+
+void Store::checkLowStock() const {
+    bool found = false;
+    cout << "\n--- Low Stock Alerts ---" << endl;
+    for (const auto* p : products) {
+        const PhysicalProduct* pp = dynamic_cast<const PhysicalProduct*>(p);
+        if (pp && pp->isLowStock()) {
+            cout << "  WARNING: [" << pp->getId() << "] " << pp->getName()
+                 << " - Qty: " << pp->getQuantity()
+                 << " (min: " << pp->getMinStock() << ")" << endl;
+            found = true;
+        }
+    }
+    if (!found) cout << "  All stock levels are OK." << endl;
+}
+
+void Store::restockProduct(int productId, int qty) {
+    Product* p = findProduct(productId);
+    if (!p) { cout << "Product not found." << endl; return; }
+    PhysicalProduct* pp = dynamic_cast<PhysicalProduct*>(p);
+    if (!pp) { cout << "Only physical products can be restocked." << endl; return; }
+    pp->restock(qty);
+    cout << "Restocked " << pp->getName() << ". New quantity: " << pp->getQuantity() << endl;
+}
+
+void Store::showInventorySummary() const {
+    int totalPhysical = 0, totalService = 0, totalUnits = 0;
+    double totalValue = 0;
+    for (const auto* p : products) {
+        const PhysicalProduct* pp = dynamic_cast<const PhysicalProduct*>(p);
+        if (pp) {
+            totalPhysical++;
+            totalUnits += pp->getQuantity();
+            totalValue += pp->getQuantity() * pp->getPrice();
+        } else {
+            totalService++;
+        }
+    }
+    cout << "\n--- Inventory Summary ---" << endl;
+    cout << "  Physical products: " << totalPhysical << endl;
+    cout << "  Service products: " << totalService << endl;
+    cout << "  Total units in stock: " << totalUnits << endl;
+    cout << "  Total inventory value: " << totalValue << endl;
+    cout << "  Categories: " << categories.size() << endl;
+}

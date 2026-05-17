@@ -33,4 +33,8 @@ public:
 
     const vector<Product*>& getProducts() const;
     const vector<Category*>& getCategories() const;
+
+    void checkLowStock() const;
+    void restockProduct(int productId, int qty);
+    void showInventorySummary() const;
 };
