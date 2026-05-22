@@ -3,6 +3,7 @@
 #include "AuthManager.h"
 #include "FileManager.h"
 #include "MenuHelpers.h"
+#include "SampleData.h"
 using namespace std;
 
 int main() {
@@ -11,6 +12,8 @@ int main() {
 
     auth.addAdmin("Ivan", "ivan@shop.bg", 1);
     auth.addCashier("Maria", "maria@shop.bg", "morning");
+
+    SampleData::seed(store);
 
     FileManager::loadCategories(store, "categories.txt");
     FileManager::loadProducts(store, "products.txt");
