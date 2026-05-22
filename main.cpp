@@ -18,14 +18,38 @@ int main() {
     FileManager::loadCategories(store, "categories.txt");
     FileManager::loadProducts(store, "products.txt");
 
-    string name, role;
     cout << "=== Shop Inventory & Cashier System ===" << endl;
-    cout << "Login name: "; getline(cin, name);
-    cout << "Role (admin/cashier): "; getline(cin, role);
 
-    if (!auth.login(name, role)) {
-        cout << "Login failed." << endl;
-        return 1;
+    bool loggedIn = false;
+    while (!loggedIn) {
+        cout << "\n1. Login" << endl;
+        cout << "2. Register" << endl;
+        cout << "0. Exit" << endl;
+        cout << "Choice: ";
+        int authChoice;
+        cin >> authChoice; clearInput();
+
+        if (authChoice == 1) {
+            string name;
+            cout << "Name: "; getline(cin, name);
+            loggedIn = auth.login(name);
+        } else if (authChoice == 2) {
+            string name, email, role, extra;
+            cout << "Name: "; getline(cin, name);
+            cout << "Email: "; getline(cin, email);
+            cout << "Role (admin/cashier): "; getline(cin, role);
+            if (role == "admin") {
+                cout << "Admin level (1-3): "; getline(cin, extra);
+            } else {
+                cout << "Shift (morning/evening): "; getline(cin, extra);
+            }
+            if (auth.registerUser(name, email, role, extra)) {
+                loggedIn = auth.login(name);
+            }
+        } else if (authChoice == 0) {
+            cout << "Goodbye!" << endl;
+            return 0;
+        }
     }
 
     int choice;

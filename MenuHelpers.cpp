@@ -3,6 +3,7 @@
 #include "PercentDiscount.h"
 #include "FixedDiscount.h"
 #include "InputValidator.h"
+#include "HtmlReport.h"
 #include <iostream>
 #include <limits>
 using namespace std;
@@ -210,6 +211,7 @@ void reportsMenu(Store& store) {
         cout << "2. Top selling products" << endl;
         cout << "3. Inventory value" << endl;
         cout << "4. Transaction summary (cash vs card)" << endl;
+        cout << "5. Export product report (HTML)" << endl;
         cout << "0. Back" << endl;
         cout << "Choice: ";
         cin >> choice; clearInput();
@@ -225,6 +227,8 @@ void reportsMenu(Store& store) {
             ReportManager::inventoryValue(store);
         } else if (choice == 4) {
             ReportManager::transactionSummary(store);
+        } else if (choice == 5) {
+            HtmlReport::generateProductReport(store, "product_report.html");
         }
     } while (choice != 0);
 }

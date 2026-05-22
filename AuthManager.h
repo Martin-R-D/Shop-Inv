@@ -16,7 +16,9 @@ public:
     ~AuthManager();
     void addAdmin(const string& name, const string& email, int level);
     void addCashier(const string& name, const string& email, const string& shift);
-    bool login(const string& name, const string& role);
+    bool login(const string& name);
+    bool registerUser(const string& name, const string& email, const string& role, const string& extra);
+    bool userExists(const string& name) const;
     void logout();
     bool isAdmin() const;
     bool isCashier() const;

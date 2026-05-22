@@ -18,27 +18,50 @@ void AuthManager::addCashier(const string& name, const string& email, const stri
     cout << "Cashier added." << endl;
 }
 
-bool AuthManager::login(const string& name, const string& role) {
-    if (role == "admin") {
-        for (const auto* a : admins) {
-            if (a->getName() == name) {
-                currentUser = name;
-                currentRole = "admin";
-                cout << "Logged in as admin: " << name << endl;
-                return true;
-            }
+bool AuthManager::login(const string& name) {
+    for (const auto* a : admins) {
+        if (a->getName() == name) {
+            currentUser = name;
+            currentRole = "admin";
+            cout << "Logged in as admin: " << name << endl;
+            return true;
         }
-    } else if (role == "cashier") {
-        for (const auto* c : cashiers) {
-            if (c->getName() == name) {
-                currentUser = name;
-                currentRole = "cashier";
-                cout << "Logged in as cashier: " << name << endl;
-                return true;
-            }
+    }
+    for (const auto* c : cashiers) {
+        if (c->getName() == name) {
+            currentUser = name;
+            currentRole = "cashier";
+            cout << "Logged in as cashier: " << name << endl;
+            return true;
         }
     }
     cout << "User not found." << endl;
+    return false;
+}
+
+bool AuthManager::registerUser(const string& name, const string& email, const string& role, const string& extra) {
+    if (userExists(name)) {
+        cout << "User already exists." << endl;
+        return false;
+    }
+    if (role == "admin") {
+        int level = 1;
+        try { level = stoi(extra); } catch (...) {}
+        addAdmin(name, email, level);
+        return true;
+    } else if (role == "cashier") {
+        addCashier(name, email, extra.empty() ? "morning" : extra);
+        return true;
+    }
+    cout << "Invalid role." << endl;
+    return false;
+}
+
+bool AuthManager::userExists(const string& name) const {
+    for (const auto* a : admins)
+        if (a->getName() == name) return true;
+    for (const auto* c : cashiers)
+        if (c->getName() == name) return true;
     return false;
 }
 
