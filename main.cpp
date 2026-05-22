@@ -5,6 +5,7 @@
 #include "PercentDiscount.h"
 #include "FixedDiscount.h"
 #include "AuthManager.h"
+#include "ReportManager.h"
 using namespace std;
 
 void clearInput() {
@@ -217,6 +218,34 @@ void deliveryMenu(Store& store) {
     } while (choice != 0);
 }
 
+void reportsMenu(Store& store) {
+    int choice;
+    do {
+        cout << "\n=== Reports ===" << endl;
+        cout << "1. Revenue by period" << endl;
+        cout << "2. Top selling products" << endl;
+        cout << "3. Inventory value" << endl;
+        cout << "4. Transaction summary (cash vs card)" << endl;
+        cout << "0. Back" << endl;
+        cout << "Choice: ";
+        cin >> choice; clearInput();
+
+        if (choice == 1) {
+            string date;
+            cout << "Date filter (or empty for all): "; getline(cin, date);
+            ReportManager::revenueByPeriod(store, date);
+        } else if (choice == 2) {
+            int n;
+            cout << "How many top products: "; cin >> n; clearInput();
+            ReportManager::topSellingProducts(store, n);
+        } else if (choice == 3) {
+            ReportManager::inventoryValue(store);
+        } else if (choice == 4) {
+            ReportManager::transactionSummary(store);
+        }
+    } while (choice != 0);
+}
+
 int main() {
     Store store;
     AuthManager auth;
@@ -265,7 +294,7 @@ int main() {
                 else cout << "Access denied." << endl;
                 break;
             case 7:
-                if (auth.isAdmin()) store.showInventorySummary();
+                if (auth.isAdmin()) reportsMenu(store);
                 else cout << "Access denied." << endl;
                 break;
             case 8:
