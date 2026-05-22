@@ -2,6 +2,7 @@
 #include "ReportManager.h"
 #include "PercentDiscount.h"
 #include "FixedDiscount.h"
+#include "InputValidator.h"
 #include <iostream>
 #include <limits>
 using namespace std;
@@ -24,17 +25,14 @@ void categoryMenu(Store& store) {
         cin >> choice; clearInput();
 
         if (choice == 1) {
-            string name;
-            cout << "Category name: "; getline(cin, name);
+            string name = InputValidator::getValidString("Category name: ");
             store.addCategory(name);
         } else if (choice == 2) {
-            int id; string name;
-            cout << "Category ID: "; cin >> id; clearInput();
-            cout << "New name: "; getline(cin, name);
+            int id = InputValidator::getValidInt("Category ID: ");
+            string name = InputValidator::getValidString("New name: ");
             store.editCategory(id, name);
         } else if (choice == 3) {
-            int id;
-            cout << "Category ID: "; cin >> id; clearInput();
+            int id = InputValidator::getValidInt("Category ID: ");
             store.removeCategory(id);
         } else if (choice == 4) {
             store.listCategories();
@@ -56,35 +54,31 @@ void productMenu(Store& store) {
         cin >> choice; clearInput();
 
         if (choice == 1) {
-            string name, barcode; double price; int catId, qty, minStock;
-            cout << "Name: "; getline(cin, name);
-            cout << "Price: "; cin >> price; clearInput();
-            cout << "Barcode: "; getline(cin, barcode);
+            string name = InputValidator::getValidString("Name: ");
+            double price = InputValidator::getValidDouble("Price: ");
+            string barcode = InputValidator::getValidString("Barcode: ");
             store.listCategories();
-            cout << "Category ID: "; cin >> catId; clearInput();
-            cout << "Quantity: "; cin >> qty; clearInput();
-            cout << "Min stock alert: "; cin >> minStock; clearInput();
+            int catId = InputValidator::getValidInt("Category ID: ");
+            int qty = InputValidator::getValidInt("Quantity: ");
+            int minStock = InputValidator::getValidInt("Min stock alert: ");
             store.addPhysicalProduct(name, price, barcode, catId, qty, minStock);
         } else if (choice == 2) {
-            string name, barcode; double price; int catId, duration;
-            cout << "Name: "; getline(cin, name);
-            cout << "Price: "; cin >> price; clearInput();
-            cout << "Barcode: "; getline(cin, barcode);
+            string name = InputValidator::getValidString("Name: ");
+            double price = InputValidator::getValidDouble("Price: ");
+            string barcode = InputValidator::getValidString("Barcode: ");
             store.listCategories();
-            cout << "Category ID: "; cin >> catId; clearInput();
-            cout << "Duration (min): "; cin >> duration; clearInput();
+            int catId = InputValidator::getValidInt("Category ID: ");
+            int duration = InputValidator::getValidInt("Duration (min): ");
             store.addServiceProduct(name, price, barcode, catId, duration);
         } else if (choice == 3) {
-            string name; double price; int id;
             store.listProducts();
-            cout << "Product ID: "; cin >> id; clearInput();
-            cout << "New name: "; getline(cin, name);
-            cout << "New price: "; cin >> price; clearInput();
+            int id = InputValidator::getValidInt("Product ID: ");
+            string name = InputValidator::getValidString("New name: ");
+            double price = InputValidator::getValidDouble("New price: ");
             store.editProduct(id, name, price);
         } else if (choice == 4) {
-            int id;
             store.listProducts();
-            cout << "Product ID: "; cin >> id; clearInput();
+            int id = InputValidator::getValidInt("Product ID: ");
             store.removeProduct(id);
         } else if (choice == 5) {
             store.listProducts();
@@ -106,10 +100,9 @@ void inventoryMenu(Store& store) {
         if (choice == 1) {
             store.checkLowStock();
         } else if (choice == 2) {
-            int id, qty;
             store.listProducts();
-            cout << "Product ID: "; cin >> id; clearInput();
-            cout << "Quantity to add: "; cin >> qty; clearInput();
+            int id = InputValidator::getValidInt("Product ID: ");
+            int qty = InputValidator::getValidInt("Quantity to add: ");
             store.restockProduct(id, qty);
         } else if (choice == 3) {
             store.showInventorySummary();
@@ -130,29 +123,26 @@ void salesMenu(Store& store) {
         cin >> choice; clearInput();
 
         if (choice == 1 || choice == 2) {
-            string payment;
-            cout << "Payment method (cash/card): "; getline(cin, payment);
+            string payment = InputValidator::getValidString("Payment method (cash/card): ");
             Transaction* t = store.createTransaction(payment);
 
             int addMore = 1;
             while (addMore) {
                 store.listProducts();
-                int prodId, qty;
-                cout << "Product ID: "; cin >> prodId; clearInput();
-                cout << "Quantity: "; cin >> qty; clearInput();
+                int prodId = InputValidator::getValidInt("Product ID: ");
+                int qty = InputValidator::getValidInt("Quantity: ");
                 store.addItemToTransaction(t, prodId, qty);
 
                 if (choice == 2) {
                     int discType;
-                    double val;
                     cout << "Discount? (1=percent, 2=fixed, 0=none): ";
                     cin >> discType; clearInput();
                     if (discType == 1) {
-                        cout << "Percent: "; cin >> val; clearInput();
+                        double val = InputValidator::getValidDouble("Percent: ");
                         Discount* d = new PercentDiscount(val);
                         store.applyDiscountToTransaction(t, t->getItems().size() - 1, d);
                     } else if (discType == 2) {
-                        cout << "Amount: "; cin >> val; clearInput();
+                        double val = InputValidator::getValidDouble("Amount: ");
                         Discount* d = new FixedDiscount(val);
                         store.applyDiscountToTransaction(t, t->getItems().size() - 1, d);
                     }
@@ -192,22 +182,19 @@ void deliveryMenu(Store& store) {
         cin.ignore();
 
         if (choice == 1) {
-            string name, email, company;
-            cout << "Name: "; getline(cin, name);
-            cout << "Email: "; getline(cin, email);
-            cout << "Company: "; getline(cin, company);
+            string name = InputValidator::getValidString("Name: ");
+            string email = InputValidator::getValidString("Email: ");
+            string company = InputValidator::getValidString("Company: ");
             store.addSupplier(name, email, company);
         } else if (choice == 2) {
             store.listSuppliers();
         } else if (choice == 3) {
             store.listSuppliers();
-            int idx;
-            cout << "Supplier #: "; cin >> idx; cin.ignore();
+            int idx = InputValidator::getValidInt("Supplier #: ");
             store.createDelivery(idx);
         } else if (choice == 4) {
             store.listDeliveries();
-            int id;
-            cout << "Delivery ID: "; cin >> id; cin.ignore();
+            int id = InputValidator::getValidInt("Delivery ID: ");
             store.receiveDelivery(id);
         } else if (choice == 5) {
             store.listDeliveries();
@@ -232,8 +219,7 @@ void reportsMenu(Store& store) {
             cout << "Date filter (or empty for all): "; getline(cin, date);
             ReportManager::revenueByPeriod(store, date);
         } else if (choice == 2) {
-            int n;
-            cout << "How many top products: "; cin >> n; clearInput();
+            int n = InputValidator::getValidInt("How many top products: ");
             ReportManager::topSellingProducts(store, n);
         } else if (choice == 3) {
             ReportManager::inventoryValue(store);
@@ -255,17 +241,14 @@ void searchMenu(Store& store) {
         cin >> choice; clearInput();
 
         if (choice == 1) {
-            string bc;
-            cout << "Barcode: "; getline(cin, bc);
+            string bc = InputValidator::getValidString("Barcode: ");
             store.searchByBarcode(bc);
         } else if (choice == 2) {
             store.listCategories();
-            int catId;
-            cout << "Category ID: "; cin >> catId; clearInput();
+            int catId = InputValidator::getValidInt("Category ID: ");
             store.filterByCategory(catId);
         } else if (choice == 3) {
-            string kw;
-            cout << "Keyword: "; getline(cin, kw);
+            string kw = InputValidator::getValidString("Keyword: ");
             store.searchByName(kw);
         }
     } while (choice != 0);
