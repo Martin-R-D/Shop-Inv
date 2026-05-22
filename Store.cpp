@@ -296,3 +296,38 @@ void Store::listDeliveries() const {
 
 const vector<Supplier*>& Store::getSuppliers() const { return suppliers; }
 const vector<Delivery*>& Store::getDeliveries() const { return deliveries; }
+
+void Store::searchByBarcode(const string& barcode) const {
+    Product* p = findProductByBarcode(barcode);
+    if (p) {
+        cout << "\nFound: " << p->getDetails() << endl;
+    } else {
+        cout << "No product with barcode: " << barcode << endl;
+    }
+}
+
+void Store::filterByCategory(int categoryId) const {
+    Category* cat = findCategory(categoryId);
+    if (!cat) { cout << "Category not found." << endl; return; }
+    cout << "\n--- Products in " << cat->getName() << " ---" << endl;
+    bool found = false;
+    for (const auto* p : products) {
+        if (p->getCategoryId() == categoryId) {
+            cout << "  [" << p->getId() << "] " << p->getDetails() << endl;
+            found = true;
+        }
+    }
+    if (!found) cout << "  No products in this category." << endl;
+}
+
+void Store::searchByName(const string& keyword) const {
+    cout << "\n--- Search results for '" << keyword << "' ---" << endl;
+    bool found = false;
+    for (const auto* p : products) {
+        if (p->getName().find(keyword) != string::npos) {
+            cout << "  [" << p->getId() << "] " << p->getDetails() << endl;
+            found = true;
+        }
+    }
+    if (!found) cout << "  No results." << endl;
+}

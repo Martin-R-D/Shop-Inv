@@ -67,4 +67,8 @@ public:
     void listDeliveries() const;
     const vector<Supplier*>& getSuppliers() const;
     const vector<Delivery*>& getDeliveries() const;
+
+    void searchByBarcode(const string& barcode) const;
+    void filterByCategory(int categoryId) const;
+    void searchByName(const string& keyword) const;
 };

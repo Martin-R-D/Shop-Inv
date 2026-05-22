@@ -246,6 +246,34 @@ void reportsMenu(Store& store) {
     } while (choice != 0);
 }
 
+void searchMenu(Store& store) {
+    int choice;
+    do {
+        cout << "\n=== Search ===" << endl;
+        cout << "1. Search by barcode" << endl;
+        cout << "2. Filter by category" << endl;
+        cout << "3. Search by name" << endl;
+        cout << "0. Back" << endl;
+        cout << "Choice: ";
+        cin >> choice; clearInput();
+
+        if (choice == 1) {
+            string bc;
+            cout << "Barcode: "; getline(cin, bc);
+            store.searchByBarcode(bc);
+        } else if (choice == 2) {
+            store.listCategories();
+            int catId;
+            cout << "Category ID: "; cin >> catId; clearInput();
+            store.filterByCategory(catId);
+        } else if (choice == 3) {
+            string kw;
+            cout << "Keyword: "; getline(cin, kw);
+            store.searchByName(kw);
+        }
+    } while (choice != 0);
+}
+
 int main() {
     Store store;
     AuthManager auth;
@@ -278,7 +306,8 @@ int main() {
             cout << "6. User management" << endl;
             cout << "7. Reports" << endl;
         }
-        cout << "8. Save data" << endl;
+        cout << "8. Search" << endl;
+        cout << "9. Save data" << endl;
         cout << "0. Logout & Exit" << endl;
         cout << "Choice: ";
         cin >> choice; clearInput();
@@ -297,7 +326,8 @@ int main() {
                 if (auth.isAdmin()) reportsMenu(store);
                 else cout << "Access denied." << endl;
                 break;
-            case 8:
+            case 8: searchMenu(store); break;
+            case 9:
                 FileManager::saveCategories(store, "categories.txt");
                 FileManager::saveProducts(store, "products.txt");
                 FileManager::saveTransactions(store, "transactions.txt");
