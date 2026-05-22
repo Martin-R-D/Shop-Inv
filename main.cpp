@@ -178,6 +178,44 @@ void salesMenu(Store& store) {
     } while (choice != 0);
 }
 
+void deliveryMenu(Store& store) {
+    int choice;
+    do {
+        cout << "\n=== Deliveries ===" << endl;
+        cout << "1. Add supplier" << endl;
+        cout << "2. List suppliers" << endl;
+        cout << "3. Create delivery" << endl;
+        cout << "4. Receive delivery" << endl;
+        cout << "5. List deliveries" << endl;
+        cout << "0. Back" << endl;
+        cout << "Choice: ";
+        cin >> choice;
+        cin.ignore();
+
+        if (choice == 1) {
+            string name, email, company;
+            cout << "Name: "; getline(cin, name);
+            cout << "Email: "; getline(cin, email);
+            cout << "Company: "; getline(cin, company);
+            store.addSupplier(name, email, company);
+        } else if (choice == 2) {
+            store.listSuppliers();
+        } else if (choice == 3) {
+            store.listSuppliers();
+            int idx;
+            cout << "Supplier #: "; cin >> idx; cin.ignore();
+            store.createDelivery(idx);
+        } else if (choice == 4) {
+            store.listDeliveries();
+            int id;
+            cout << "Delivery ID: "; cin >> id; cin.ignore();
+            store.receiveDelivery(id);
+        } else if (choice == 5) {
+            store.listDeliveries();
+        }
+    } while (choice != 0);
+}
+
 int main() {
     Store store;
 
@@ -194,7 +232,8 @@ int main() {
         cout << "2. Product management" << endl;
         cout << "3. Inventory management" << endl;
         cout << "4. Sales" << endl;
-        cout << "5. Save data" << endl;
+        cout << "5. Deliveries" << endl;
+        cout << "6. Save data" << endl;
         cout << "0. Exit" << endl;
         cout << "Choice: ";
         cin >> choice; clearInput();
@@ -204,7 +243,8 @@ int main() {
             case 2: productMenu(store); break;
             case 3: inventoryMenu(store); break;
             case 4: salesMenu(store); break;
-            case 5:
+            case 5: deliveryMenu(store); break;
+            case 6:
                 FileManager::saveCategories(store, "categories.txt");
                 FileManager::saveProducts(store, "products.txt");
                 FileManager::saveTransactions(store, "transactions.txt");

@@ -3,12 +3,14 @@
 #include <algorithm>
 #include <ctime>
 
-Store::Store() : nextTransactionId(1), nextCategoryId(1), nextProductId(1) {}
+Store::Store() : nextTransactionId(1), nextCategoryId(1), nextProductId(1), nextSupplierId(1), nextDeliveryId(1) {}
 
 Store::~Store() {
     for (auto* c : categories) delete c;
     for (auto* p : products) delete p;
     for (auto* t : transactions) delete t;
+    for (auto* s : suppliers) delete s;
+    for (auto* d : deliveries) delete d;
 }
 
 void Store::addCategory(const string& name) {
@@ -214,3 +216,83 @@ vector<Transaction*> Store::filterTransactionsByDate(const string& date) const {
 }
 
 const vector<Transaction*>& Store::getTransactions() const { return transactions; }
+
+void Store::addSupplier(const string& name, const string& email, const string& company) {
+    suppliers.push_back(new Supplier(name, email, company));
+    cout << "Supplier added." << endl;
+}
+
+void Store::listSuppliers() const {
+    if (suppliers.empty()) { cout << "No suppliers." << endl; return; }
+    cout << "\n--- Suppliers ---" << endl;
+    for (int i = 0; i < (int)suppliers.size(); i++) {
+        cout << "  [" << i + 1 << "] " << suppliers[i]->getContactInfo() << endl;
+    }
+}
+
+Supplier* Store::findSupplier(int index) const {
+    if (index >= 1 && index <= (int)suppliers.size()) return suppliers[index - 1];
+    return nullptr;
+}
+
+void Store::createDelivery(int supplierIndex) {
+    Supplier* s = findSupplier(supplierIndex);
+    if (!s) { cout << "Supplier not found." << endl; return; }
+
+    time_t now = time(0);
+    string date = ctime(&now);
+    date.pop_back();
+
+    Delivery* d = new Delivery(nextDeliveryId++, date, supplierIndex);
+
+    int addMore = 1;
+    while (addMore) {
+        listProducts();
+        int prodId, qty;
+        cout << "Product ID to deliver: "; cin >> prodId;
+        cin.ignore();
+        cout << "Quantity: "; cin >> qty;
+        cin.ignore();
+        d->addProduct(prodId, qty);
+        cout << "Add another product? (1=yes, 0=no): "; cin >> addMore;
+        cin.ignore();
+    }
+
+    deliveries.push_back(d);
+    cout << "Delivery #" << d->getId() << " created (pending)." << endl;
+}
+
+void Store::receiveDelivery(int deliveryId) {
+    for (auto* d : deliveries) {
+        if (d->getId() == deliveryId) {
+            if (d->getStatusStr() == "received") {
+                cout << "Already received." << endl;
+                return;
+            }
+            for (const auto& pq : d->getProductQuantities()) {
+                Product* p = findProduct(pq.first);
+                PhysicalProduct* pp = dynamic_cast<PhysicalProduct*>(p);
+                if (pp) {
+                    pp->restock(pq.second);
+                    cout << "  Restocked " << pp->getName() << " +" << pq.second << endl;
+                }
+            }
+            d->receive();
+            cout << "Delivery #" << deliveryId << " received." << endl;
+            return;
+        }
+    }
+    cout << "Delivery not found." << endl;
+}
+
+void Store::listDeliveries() const {
+    if (deliveries.empty()) { cout << "No deliveries." << endl; return; }
+    cout << "\n--- Deliveries ---" << endl;
+    for (const auto* d : deliveries) {
+        cout << "  [#" << d->getId() << "] " << d->getDeliveryDate()
+             << " | Status: " << d->getStatusStr() << endl;
+    }
+}
+
+const vector<Supplier*>& Store::getSuppliers() const { return suppliers; }
+const vector<Delivery*>& Store::getDeliveries() const { return deliveries; }

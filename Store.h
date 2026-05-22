@@ -5,6 +5,8 @@
 #include "ServiceProduct.h"
 #include "Transaction.h"
 #include "TransactionItem.h"
+#include "Supplier.h"
+#include "Delivery.h"
 #include <vector>
 #include <string>
 using namespace std;
@@ -14,9 +16,13 @@ private:
     vector<Category*> categories;
     vector<Product*> products;
     vector<Transaction*> transactions;
+    vector<Supplier*> suppliers;
+    vector<Delivery*> deliveries;
     int nextTransactionId;
     int nextCategoryId;
     int nextProductId;
+    int nextSupplierId;
+    int nextDeliveryId;
 public:
     Store();
     ~Store();
@@ -52,4 +58,13 @@ public:
     void applyDiscountToTransaction(Transaction* t, int itemIndex, Discount* d);
     vector<Transaction*> filterTransactionsByDate(const string& date) const;
     const vector<Transaction*>& getTransactions() const;
+
+    void addSupplier(const string& name, const string& email, const string& company);
+    void listSuppliers() const;
+    Supplier* findSupplier(int index) const;
+    void createDelivery(int supplierIndex);
+    void receiveDelivery(int deliveryId);
+    void listDeliveries() const;
+    const vector<Supplier*>& getSuppliers() const;
+    const vector<Delivery*>& getDeliveries() const;
 };
