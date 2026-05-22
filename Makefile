@@ -6,7 +6,8 @@ SRCS = main.cpp Person.cpp Admin.cpp Cashier.cpp Supplier.cpp \
        Product.cpp PhysicalProduct.cpp ServiceProduct.cpp \
        Category.cpp Discount.cpp PercentDiscount.cpp \
        Transaction.cpp TransactionItem.cpp Delivery.cpp Store.cpp \
-	   FileManager.cpp FixedDiscount.cpp AuthManager.cpp ReportManager.cpp
+	   FileManager.cpp FixedDiscount.cpp AuthManager.cpp ReportManager.cpp \
+	   MenuHelpers.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 
