@@ -1,10 +1,8 @@
 #include "Admin.h"
 
-Admin::Admin(const string& name, const string& email, int adminLevel)
-    : Person(name, email), adminLevel(adminLevel) {}
+Admin::Admin(const string& name, const string& email)
+    : Person(name, email) {}
 
 string Admin::getInfo() const {
-    return "Admin: " + name + " | Email: " + email + " | Level: " + to_string(adminLevel);
+    return "Admin: " + name + " | Email: " + email;
 }
-
-int Admin::getAdminLevel() const { return adminLevel; }

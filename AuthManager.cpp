@@ -8,8 +8,8 @@ AuthManager::~AuthManager() {
     for (auto* c : cashiers) delete c;
 }
 
-void AuthManager::addAdmin(const string& name, const string& email, int level) {
-    admins.push_back(new Admin(name, email, level));
+void AuthManager::addAdmin(const string& name, const string& email) {
+    admins.push_back(new Admin(name, email));
     cout << "Admin added." << endl;
 }
 
@@ -39,18 +39,16 @@ bool AuthManager::login(const string& name) {
     return false;
 }
 
-bool AuthManager::registerUser(const string& name, const string& email, const string& role, const string& extra) {
+bool AuthManager::registerUser(const string& name, const string& email, const string& role, const string& shift) {
     if (userExists(name)) {
         cout << "User already exists." << endl;
         return false;
     }
     if (role == "admin") {
-        int level = 1;
-        try { level = stoi(extra); } catch (...) {}
-        addAdmin(name, email, level);
+        addAdmin(name, email);
         return true;
     } else if (role == "cashier") {
-        addCashier(name, email, extra.empty() ? "morning" : extra);
+        addCashier(name, email, shift.empty() ? "morning" : shift);
         return true;
     }
     cout << "Invalid role." << endl;

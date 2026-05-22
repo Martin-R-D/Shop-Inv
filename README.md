@@ -20,9 +20,8 @@ make
 ./shop
 ```
 
-## Default Users
-- Admin: `Ivan` (role: admin)
-- Cashier: `Maria` (role: cashier)
+## Getting Started
+Register a new user on first launch (admin or cashier). Login by name on subsequent runs.
 
 ## File Structure
 Each class has its own `.h` and `.cpp` file. Menu logic is separated in `MenuHelpers`. Data persists in `.txt` files.

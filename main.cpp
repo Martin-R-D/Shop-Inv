@@ -10,9 +10,6 @@ int main() {
     Store store;
     AuthManager auth;
 
-    auth.addAdmin("Ivan", "ivan@shop.bg", 1);
-    auth.addCashier("Maria", "maria@shop.bg", "morning");
-
     SampleData::seed(store);
 
     FileManager::loadCategories(store, "categories.txt");
@@ -34,16 +31,14 @@ int main() {
             cout << "Name: "; getline(cin, name);
             loggedIn = auth.login(name);
         } else if (authChoice == 2) {
-            string name, email, role, extra;
+            string name, email, role, shift;
             cout << "Name: "; getline(cin, name);
             cout << "Email: "; getline(cin, email);
             cout << "Role (admin/cashier): "; getline(cin, role);
-            if (role == "admin") {
-                cout << "Admin level (1-3): "; getline(cin, extra);
-            } else {
-                cout << "Shift (morning/evening): "; getline(cin, extra);
+            if (role == "cashier") {
+                cout << "Shift (morning/evening): "; getline(cin, shift);
             }
-            if (auth.registerUser(name, email, role, extra)) {
+            if (auth.registerUser(name, email, role, shift)) {
                 loggedIn = auth.login(name);
             }
         } else if (authChoice == 0) {

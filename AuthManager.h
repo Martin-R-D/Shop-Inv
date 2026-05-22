@@ -14,10 +14,10 @@ private:
 public:
     AuthManager();
     ~AuthManager();
-    void addAdmin(const string& name, const string& email, int level);
+    void addAdmin(const string& name, const string& email);
     void addCashier(const string& name, const string& email, const string& shift);
     bool login(const string& name);
-    bool registerUser(const string& name, const string& email, const string& role, const string& extra);
+    bool registerUser(const string& name, const string& email, const string& role, const string& shift);
     bool userExists(const string& name) const;
     void logout();
     bool isAdmin() const;
